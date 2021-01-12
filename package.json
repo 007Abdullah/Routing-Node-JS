@@ -16,7 +16,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cls+l && node server.js"
+    "start": "node server.js"
   },
   "author": "M Abdullah",
   "license": "MIT"

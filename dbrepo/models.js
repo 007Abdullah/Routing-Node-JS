@@ -4,17 +4,17 @@ let dbURI = "mongodb+srv://root:root@cluster0.s5oku.mongodb.net/CURD_DATA?retryW
 
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-mongoose.connect.on("connected", function () {
+mongoose.connection.on("connected", function () {
     console.log("Mongoose is connected");
 })
 
 
-mongoose.connect.on("disconnected", function () {//disconnect
+mongoose.connection.on("disconnected", function () {//disconnect
     console.log("Mongoose is disconnected");
     process.exit(1);
 })
 
-mongoose.connect.on("error", function (err) {//any error
+mongoose.connection.on("error", function (err) {//any error
     console.log("Mongoose connection error :", err);
     process.exit(1);
 });
@@ -41,7 +41,7 @@ var userSchema = new mongoose.Schema({
 var userModel = mongoose.model("users", userSchema);
 
 module.exports = {
-    userModel: userModel
+    userModel: userModel,
     // orderModel: orderModel
     // others
 }

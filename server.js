@@ -1,3 +1,5 @@
+const PORT = process.env.PORT || 5000;
+
 var express = require("express");
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
@@ -10,7 +12,7 @@ var path = require("path");
 
 var authRoutes = require("./routes/auth");
 
-
+console.log("module: ", userModel);
 var SERVER_SECRET = process.env.SECRET || "1234";
 
 var app = express();
@@ -19,7 +21,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin: "*",
+    origin: '*',
     credentials: true
 }));
 
@@ -39,10 +41,7 @@ app.use(function (req, res, next) {
     console.log("req.cookies: ", req.cookies);
 
     if (!req.cookies.jToken) {
-        res.send({
-            message: "include http-only credentials with every request",
-            status: 401
-        });
+        res.status(401).send("include http-only credentials with every request")
         return;
     }
     jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
@@ -86,3 +85,23 @@ app.use(function (req, res, next) {
 
 });
 
+app.get("/profile", (req, res, next) => {
+    console.log(req.body);
+
+    userModel.findById(req.body.jToken.id, 'name email phone gender createdOn', function (err, doc) {
+        if (!err) {
+            res.send({
+                profile: doc
+            })
+        } else {
+            res.send({
+                message: "Server Error",
+                status: 500
+            });
+        }
+    });
+})
+
+app.listen(PORT, () => {
+    console.log("Server is Running :", PORT);
+})
