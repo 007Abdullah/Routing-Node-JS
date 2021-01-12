@@ -70,9 +70,86 @@ api.post("/signup", (req, res, next) => {
 
 api.post("/login", (req, res, next) => {
 
-    
+    if (!req.body.email || !req.body.password) {
+        res.send({
+            message: `please send email and passwod in json body.
+            e.g:
+            {
+                "email": "malikasinger@gmail.com",
+                "password": "abc",
+            }`,
+            status: 403
+        });
+        return
+    }
+    userModel.findOne({ email: req.body.email }, function (err, user) {
+        if (err) {
+            res.send({
+                message: "An Error Occure :" + JSON.stringify(err),
+                status: 500
+            });
+        }
+        else if (user) {
+            bcrypt.varifyHash(req.body.password, user.password).then(isMatched => {
+                if (isMatched) {
+                    console.log("Matched");
+
+                    var token = jwt.sign({
+                        id: user._id,
+                        name: user.name,
+                        email: user.email,
+                        phone: user.phone,
+                        gender: user.gender
+                    }, SERVER_SECRET);
+
+                    res.cookie('jToken', token, {
+                        maxAge: 86_400_000,
+                        httpOnly: true
+                    });
+
+                    // when making request from frontend:
+                    // var xhr = new XMLHttpRequest();
+                    // xhr.open('GET', 'http://example.com/', true);
+                    // xhr.withCredentials = true;
+                    // xhr.send(null);
 
 
+                    res.send({
+                        message: "Login Success",
+                        user: {
+                            name: user.name,
+                            email: user.email,
+                            phone: user.phone,
+                            gender: user.gender,
+
+                        }
+                    });
+                } else {
+                    console.log("not matched");
+                    res.send({
+                        message: "inncorrect Password",
+                        status: 401
+                    })
+                }
+            }).catch(e => {
+                console.log("error: ", e)
+            });
+        } else {
+            res.send({
+                message: "User NOT Found",
+                status: 403
+            });
+        }
+    });
+});
 
 
+api.post("/logout", () => {
+    res.cookie("jToken", "", {
+        maxAge: 86_400_000,
+        httpOnly: true
+    });
+    res.send("logout success");
 })
+
+module.exports = api;
