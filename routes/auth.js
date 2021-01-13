@@ -196,10 +196,10 @@ api.post("/forget-password", (req, res, next) => {
                     status: 500
                 });
             });
-        }else{
+        } else {
             res.send({
                 message: "User Not Found",
-                status:403
+                status: 403
             });
         }
     }
@@ -207,7 +207,22 @@ api.post("/forget-password", (req, res, next) => {
 });
 
 
-
+api.post("/forget-password-step2", (req, res, next) => {
+    if (!req.body.email && !req.body.opt && !req.body.newPassword) {
+        res.status(403).send(`
+            please send email & otp in json body.
+            e.g:
+            {
+                "email": "malikasinger@gmail.com",
+                "newPassword": "xxxxxx",
+                "otp": "xxxxx" 
+            }`)
+        return;
+    }
+    userModel.findOne({email:req.body.email}), function (err, user) {
+        
+    }
+});
 
 
 
