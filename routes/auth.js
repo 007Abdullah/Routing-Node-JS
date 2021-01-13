@@ -177,12 +177,30 @@ api.post("/forget-password", (req, res, next) => {
             otpModel.save({
                 email: req.body.email,
                 optCode: opt
+            }).then((doc) => {
+                client.sendEmail({
+                    "From": "abdullah_student@sysborg.com",
+                    "To": req.body.email,
+                    "Subject": "Reset your password",
+                    "TextBody": `Here is your pasword reset code: ${opt}`
+                }).then((status) => {
+                    console.log("Status :", status);
+                    res.send({
+                        message: "Email Send  With Otp"
+                    });
+                });
+            }).catch((err) => {
+                console.log("error in creating otp: ", err);
+                res.send({
+                    message: "Unexpected Error",
+                    status: 500
+                });
             });
-
-
-
-            
-
+        }else{
+            res.send({
+                message: "User Not Found",
+                status:403
+            });
         }
     }
 
