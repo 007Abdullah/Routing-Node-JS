@@ -172,11 +172,11 @@ api.post("/forget-password", (req, res, next) => {
             })
         }
         else if (user) {
-            const opt = Math.floor(getRandomArbitrary(11111, 99999));
+            const otp = Math.floor(getRandomArbitrary(11111, 99999));
 
             otpModel.save({
                 email: req.body.email,
-                optCode: opt
+                optCode: otp
             }).then((doc) => {
                 client.sendEmail({
                     "From": "abdullah_student@sysborg.com",
@@ -213,14 +213,62 @@ api.post("/forget-password-step2", (req, res, next) => {
             please send email & otp in json body.
             e.g:
             {
-                "email": "malikasinger@gmail.com",
+                "email": "kb337137@gmail.com",
                 "newPassword": "xxxxxx",
                 "otp": "xxxxx" 
             }`)
         return;
     }
-    userModel.findOne({email:req.body.email}), function (err, user) {
-        
+    userModel.findOne({ email: req.body.email }), function (err, user) {
+        if (err) {
+            res.send({
+                message: "An Error Occure " + JSON.stringify(err),
+                status: 500
+            });
+        }
+        else if (user) {
+
+            otpModel.find({ email: req.body.email }), function (err, otpData) {
+                if (err) {
+                    res.send({
+                        message: "An Error Occure" + JSON.stringify(err),
+                        status: 500
+                    });
+                }
+                else if (otpData) {
+                    otpData = otpData[otpData.length - 1]
+
+                    console.log("otpData: ", otpData);
+
+                    const now = new Date().getTime();
+                    const otpIat = new Date(otpData.createdOn).getTime();// 2021-01-06T13:08:33.657+0000
+                    const diff = now - otpIat;// 300000 5 minute
+                    console.log("diff: ", diff);
+                    
+                    if(otpData){
+
+                    }
+
+
+
+
+
+
+                }
+
+
+
+            }
+
+
+
+
+
+
+
+        } else {
+
+        }
     }
 });
 
