@@ -1,7 +1,7 @@
 var express = require("express");
 var bcrypt = require("bcrypt-inzi")
 var jwt = require('jsonwebtoken'); // https://github.com/auth0/node-jsonwebtoken
-var { userModel } = require("../dbrepo/models"); // problem was here, notice two dots instead of one
+var { userModel, otpModel } = require("../dbrepo/models"); // problem was here, notice two dots instead of one
 // console.log("userModel: ", userModel);
 var postmark = require("postmark");
 var { SERVER_SECRET } = require("../core/index");
@@ -173,6 +173,16 @@ api.post("/forget-password", (req, res, next) => {
         }
         else if (user) {
             const opt = Math.floor(getRandomArbitrary(11111, 99999));
+
+            otpModel.save({
+                email: req.body.email,
+                optCode: opt
+            });
+
+
+
+            
+
         }
     }
 

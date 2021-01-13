@@ -40,8 +40,20 @@ var userSchema = new mongoose.Schema({
 
 var userModel = mongoose.model("users", userSchema);
 
+
+var optSchema = new mongoose.Schema({
+    "email": String,
+    "optCode": String,
+    "createOn": { "type": Date, "default": Date.now },
+});
+
+var otpModel = mongoose.model("opt", optSchema)
+
+
+
 module.exports = {
     userModel: userModel,
+    otpModel: otpModel,
     // orderModel: orderModel
     // others
 }
