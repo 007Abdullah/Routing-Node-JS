@@ -2,7 +2,12 @@ var express = require("express");
 var bcrypt = require("bcrypt-inzi")
 var jwt = require('jsonwebtoken'); // https://github.com/auth0/node-jsonwebtoken
 var { userModel } = require("../dbrepo/models"); // problem was here, notice two dots instead of one
-console.log("userModel: ", userModel);
+// console.log("userModel: ", userModel);
+var postmark = require("postmark");
+var { SERVER_SECRET } = require("../core/index");
+
+var client = new postmark.Client("POSTMARK-SERVER-API-TOKEN-HERE");
+
 
 var api = express.Router();
 
@@ -142,14 +147,44 @@ api.post("/login", (req, res, next) => {
         }
     });
 });
-
-
 api.post("/logout", () => {
     res.cookie("jToken", "", {
         maxAge: 86_400_000,
         httpOnly: true
     });
     res.send("logout success");
-})
+});
+
+
+api.post("/forget-password", (req, res, next) => {
+    if (!req.body.email) {
+        res.status(403).send(` please send email in json body.
+        e.g:
+        {
+            "email": "malikasinger@gmail.com"
+        }`)
+        return;
+    }
+    userModel.findOne({ email: req.body.email }), function (err, user) {
+        if (err) {
+            res.status(500).send({
+                message: "An Error occured" + JSON.stringify(err)
+            })
+        }
+        else if (user) {
+            const opt = Math.floor(getRandomArbitrary(11111, 99999));
+        }
+    }
+
+});
+
+
+
+
+
 
 module.exports = api;
+
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}

@@ -1,22 +1,19 @@
 const PORT = process.env.PORT || 5000;
-
 var express = require("express");
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var cors = require("cors");
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
-
 var { userModel } = require("./dbrepo/models");
 var path = require("path");
-
 var authRoutes = require("./routes/auth");
+// console.log("module: ", userModel);
+var { SERVER_SECRET } = require("./core/index");
 
-console.log("module: ", userModel);
-var SERVER_SECRET = process.env.SECRET || "1234";
+
 
 var app = express();
-
 app.use(bodyParser.json());
 app.use(cookieParser());
 

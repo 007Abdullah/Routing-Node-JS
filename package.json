@@ -11,12 +11,15 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.11",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "postmark": "^2.7.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "cls+l && node server.js"
   },
   "author": "M Abdullah",
   "license": "MIT"
