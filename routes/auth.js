@@ -244,30 +244,37 @@ api.post("/forget-password-step2", (req, res, next) => {
                     const otpIat = new Date(otpData.createdOn).getTime();// 2021-01-06T13:08:33.657+0000
                     const diff = now - otpIat;// 300000 5 minute
                     console.log("diff: ", diff);
-                    
-                    if(otpData){
 
+                    if (otpData.optCode === req.body.otp && diff < 30000) {
+                        optData.remove();
+
+                        bcrypt.stringToHash(req.body.newPassword).then(function (hash) {
+                            user.update({ password: hash }, {}, function (err, data) {
+                                res.send({
+                                    message: "Password Update"
+                                })
+                            });
+                        });
+
+                    } else {
+                        res.send({
+                            message: "Incorrect Otp",
+                            status: 401
+                        });
                     }
-
-
-
-
-
-
+                } else {
+                    res.send({
+                        message: "Incorrect Otp",
+                        status: 401
+                    })
                 }
 
-
-
             }
-
-
-
-
-
-
-
         } else {
-
+            res.send({
+                message: "User Not Found",
+                status: 403
+            });
         }
     }
 });
