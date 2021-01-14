@@ -6,7 +6,7 @@ var { userModel, otpModel } = require("../dbrepo/models"); // problem was here, 
 var postmark = require("postmark");
 var { SERVER_SECRET } = require("../core/index");
 
-var client = new postmark.Client("POSTMARK-SERVER-API-TOKEN-HERE");
+var client = new postmark.Client("35cebacb-d58e-403b-aa4d-34d8cab6c422");
 
 
 var api = express.Router();
@@ -80,7 +80,7 @@ api.post("/login", (req, res, next) => {
             message: `please send email and passwod in json body.
             e.g:
             {
-                "email": "malikasinger@gmail.com",
+                "email": "kb337137@gmail.com@gmail.com",
                 "password": "abc",
             }`,
             status: 403
@@ -158,14 +158,13 @@ api.post("/logout", () => {
 
 api.post("/forget-password", (req, res, next) => {
     if (!req.body.email) {
-        res.status(403).send(` please send email in json body.
-        e.g:
-        {
-            "email": "malikasinger@gmail.com"
-        }`)
-        return;
+        res.send({
+            status: 403,
+            message: "Please send EMail in JSON BODY"
+        });
+        return
     }
-    userModel.findOne({ email: req.body.email }), function (err, user) {
+    userModel.findOne({ email: req.body.email }, function (err, user) {
         if (err) {
             res.status(500).send({
                 message: "An Error occured" + JSON.stringify(err)
@@ -174,7 +173,7 @@ api.post("/forget-password", (req, res, next) => {
         else if (user) {
             const otp = Math.floor(getRandomArbitrary(11111, 99999));
 
-            otpModel.save({
+            otpModel.create({
                 email: req.body.email,
                 optCode: otp
             }).then((doc) => {
@@ -182,11 +181,17 @@ api.post("/forget-password", (req, res, next) => {
                     "From": "abdullah_student@sysborg.com",
                     "To": req.body.email,
                     "Subject": "Reset your password",
-                    "TextBody": `Here is your pasword reset code: ${opt}`
+                    "TextBody": `Here is your pasword reset code: ${otp}`
                 }).then((status) => {
                     console.log("Status :", status);
                     res.send({
                         message: "Email Send  With Otp"
+                    });
+                }).catch((err) => {
+                    console.log("error in creating otp: ", err);
+                    res.send({
+                        message: "Unexpected Error",
+                        status: 500
                     });
                 });
             }).catch((err) => {
@@ -202,9 +207,64 @@ api.post("/forget-password", (req, res, next) => {
                 status: 403
             });
         }
-    }
+    });
 
 });
+
+
+
+
+
+
+// api.post("/forget-password", (req, res, next) => {
+//     if (!req.body.email) {
+//         res.status(403).send(` please send email in json body.
+//         e.g:
+//         {
+//             "email": "kb337137@gmail.com"
+//         }`)
+//         return;
+//     }
+//     userModel.findOne({ email: req.body.email }), function (err, user) {
+//         if (err) {
+//             res.status(500).send({
+//                 message: "An Error occured" + JSON.stringify(err)
+//             })
+//         }
+//         else if (user) {
+//             const otp = Math.floor(getRandomArbitrary(11111, 99999));
+
+//             otpModel.save({
+//                 email: req.body.email,
+//                 optCode: otp
+//             }).then((doc) => {
+//                 client.sendEmail({
+//                     "From": "abdullah_student@sysborg.com",
+//                     "To": req.body.email,
+//                     "Subject": "Reset your password",
+//                     "TextBody": `Here is your pasword reset code: ${opt}`
+//                 }).then((status) => {
+//                     console.log("Status :", status);
+//                     res.send({
+//                         message: "Email Send  With Otp"
+//                     });
+//                 });
+//             }).catch((err) => {
+//                 console.log("error in creating otp: ", err);
+//                 res.send({
+//                     message: "Unexpected Error",
+//                     status: 500
+//                 });
+//             });
+//         } else {
+//             res.send({
+//                 message: "User Not Found",
+//                 status: 403
+//             });
+//         }
+//     }
+
+// });
 
 
 api.post("/forget-password-step2", (req, res, next) => {
@@ -281,8 +341,9 @@ api.post("/forget-password-step2", (req, res, next) => {
 
 
 
-module.exports = api;
-
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
+
+module.exports = api;
+
