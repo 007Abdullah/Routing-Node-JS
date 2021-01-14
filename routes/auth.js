@@ -1,18 +1,20 @@
 var express = require("express");
 var bcrypt = require("bcrypt-inzi")
 var jwt = require('jsonwebtoken'); // https://github.com/auth0/node-jsonwebtoken
-var { userModel, otpModel } = require("../dbrepo/models"); // problem was here, notice two dots instead of one
+var { userModel, otpModel } = require("../dbrepo/models");
+// problem was here, notice two dots instead of one
 // console.log("userModel: ", userModel);
+var api = express.Router();
 var postmark = require("postmark");
 var { SERVER_SECRET } = require("../core/index");
 
 var client = new postmark.Client("35cebacb-d58e-403b-aa4d-34d8cab6c422");
 
 
-var api = express.Router();
+
 
 api.post("/signup", (req, res, next) => {
-    if (!req.body.name
+    if (!req.body.uname
         || !req.body.email
         || !req.body.password
         || !req.body.phone
@@ -22,7 +24,7 @@ api.post("/signup", (req, res, next) => {
             please send name, email, passwod, phone and gender in json body.
             e.g:
             {
-                "name": "Sameer",
+                "uname": "Sameer",
                 "email": "kb337137@gmail.com",
                 "password": "abc",
                 "phone": "03121278181",

@@ -1,19 +1,21 @@
-const PORT = process.env.PORT || 5000;
 var express = require("express");
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var cors = require("cors");
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
-var { userModel } = require("./dbrepo/models");
+
 var path = require("path");
-var authRoutes = require("./routes/auth");
+
 // console.log("module: ", userModel);
 var { SERVER_SECRET } = require("./core/index");
 
 
+var { userModel, otpModel } = require("./dbrepo/models");
+var authRoutes = require("./routes/auth");
 
 var app = express();
+
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -31,7 +33,10 @@ app.use(morgan('dev'));
 //     res.sendFile(path.resolve(path.join(__dirname, "public")))
 // })
 
-app.use("/auth", authRoutes);
+app.use("/", express.static(path.resolve(path.join(__dirname, "public"))))
+
+app.use('/', authRoutes);
+
 
 app.use(function (req, res, next) {
 
@@ -98,6 +103,7 @@ app.get("/profile", (req, res, next) => {
         }
     });
 })
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log("Server is Running :", PORT);
