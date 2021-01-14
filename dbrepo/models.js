@@ -41,13 +41,13 @@ var userSchema = new mongoose.Schema({
 var userModel = mongoose.model("users", userSchema);
 
 
-var optSchema = new mongoose.Schema({
+var otpSchema = new mongoose.Schema({
     "email": String,
-    "optCode": String,
+    "otpCode": String,
     "createdOn": { "type": Date, "default": Date.now },
 });
 
-var otpModel = mongoose.model("opt", optSchema)
+var otpModel = mongoose.model("otp", otpSchema)
 
 
 

@@ -26,10 +26,10 @@ app.use(morgan('dev'));
 
 // example how to send file any requrest
 
-app.get("/", (req, res, next) => {
-    console.log(__dir);
-    res.sendFile(path.resolve(path.join(__dirname, "public")))
-})
+// app.get("/", (req, res, next) => {
+//     console.log(__dir);
+//     res.sendFile(path.resolve(path.join(__dirname, "public")))
+// })
 
 app.use("/auth", authRoutes);
 
