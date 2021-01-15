@@ -37,7 +37,7 @@ api.post("/signup", (req, res, next) => {
             bcrypt.stringToHash(req.body.password).then(function (hash) {
 
                 var newUser = new userModel({
-                    "name": req.body.name,
+                    "name": req.body.uname,
                     "email": req.body.email,
                     "password": hash,
                     "phone": req.body.phone,
@@ -49,6 +49,7 @@ api.post("/signup", (req, res, next) => {
                             message: "User Create",
                             status: 200
                         });
+                      
                     }
                     else {
                         console.log(err);
@@ -82,7 +83,7 @@ api.post("/login", (req, res, next) => {
             message: `please send email and passwod in json body.
             e.g:
             {
-                "email": "kb337137@gmail.com@gmail.com",
+                "email": "kb337137@gmail.com",
                 "password": "abc",
             }`,
             status: 403
@@ -90,6 +91,7 @@ api.post("/login", (req, res, next) => {
         return
     }
     userModel.findOne({ email: req.body.email }, function (err, user) {
+
         if (err) {
             res.send({
                 message: "An Error Occure :" + JSON.stringify(err),
@@ -97,6 +99,7 @@ api.post("/login", (req, res, next) => {
             });
         }
         else if (user) {
+
             bcrypt.varifyHash(req.body.password, user.password).then(isMatched => {
                 if (isMatched) {
                     console.log("Matched");
@@ -129,7 +132,8 @@ api.post("/login", (req, res, next) => {
                             phone: user.phone,
                             gender: user.gender,
 
-                        }
+                        },
+                        status: 200
                     });
                 } else {
                     console.log("not matched");
@@ -286,88 +290,6 @@ api.post("/forget-password-step2", (req, res, next) => {
 });
 
 
-
-
-
-// api.post("/forget-password-step2", (req, res, next) => {
-//     if (!req.body.email && !req.body.opt && !req.body.newPassword) {
-//         res.status(403).send(`
-//             please send email & otp in json body.
-//             e.g:
-//             {
-//                 "email": "kb337137@gmail.com",
-//                 "newPassword": "xxxxxx",
-//                 "otp": "xxxxx" 
-//             }`)
-//         return;
-//     }
-//     userModel.findOne({ email: req.body.email }), function (err, user) {
-//         if (err) {
-//             res.send({
-//                 message: "An Error Occure " + JSON.stringify(err),
-//                 status: 500
-//             });
-//         }
-//         else if (user) {
-//             console.log(user);
-//             otpModel.find({ email: req.body.email }), function (err, otpData) {
-//                 if (err) {
-//                     res.send({
-//                         message: "An Error Occure" + JSON.stringify(err),
-//                         status: 500
-//                     });
-//                 }
-//                 else if (otpData) {
-//                     otpData = otpData[otpData.length - 1]
-
-//                     console.log("otpData: ", otpData);
-
-//                     const now = new Date().getTime();
-//                     const otpIat = new Date(otpData.createdOn).getTime();// 2021-01-06T13:08:33.657+0000
-//                     const diff = now - otpIat;// 300000 5 minute
-//                     console.log("diff: ", diff);
-
-//                     if (otpData.optCode === req.body.otp && diff < 300000) {
-//                         optData.remove();
-
-//                         bcrypt.stringToHash(req.body.newPassword).then(function (hash) {
-//                             user.update({ password: hash }, {}, function (err, data) {
-//                                 if (err) {
-//                                     console.log("opt Data ERROR ", err)
-//                                     res.send({
-//                                         message: "Error Occure", errr,
-//                                         status: 405
-//                                     });
-//                                 } else if (data) {
-//                                     res.send({
-//                                         message: "Password Update"
-//                                     });
-//                                 }
-//                             });
-//                         });
-
-//                     } else {
-//                         res.send({
-//                             message: "Incorrect Otp",
-//                             status: 401
-//                         });
-//                     }
-//                 } else {
-//                     res.send({
-//                         message: "Incorrect Otp",
-//                         status: 401
-//                     })
-//                 }
-
-//             }
-//         } else {
-//             res.send({
-//                 message: "User Not Found",
-//                 status: 403
-//             });
-//         }
-//     }
-// });
 
 
 

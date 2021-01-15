@@ -12,9 +12,12 @@ function signup() {
             gender: document.getElementById("gender").value
         }, withCredentials: true
     }).then((response) => {
-        console.log(response);
-        alert(response.data.message)
-        window.location.href = "./login.html"
+        if (response.data.status === 200) {
+            alert(response.data.message)
+            location.href = "./login.html"
+        } else {
+            alert(response.data.message);
+        }
     }).catch((error) => {
         console.log(error);
     });
@@ -31,12 +34,16 @@ function login() {
             password: document.getElementById("txt_password").value,
         },
         withCredentials: true
-    }).then(function (response) {
-        console.log(response.data.message);
-        alert(response.data.message);
-        window.location.href = "profile.html";
-
-    }).catch(function (error) {
+    }).then((response) => {
+        if(response.data.status === 200){
+            console.log(response.data.message);
+            alert(response.data.message);
+            window.location.href = "./profile.html"
+            return
+        }else{
+            alert(response.data.message)
+        }
+    }, (error) => {
         console.log(error);
     });
 
@@ -45,7 +52,7 @@ function login() {
 
 function profile() {
     axios.get('http://localhost:5000/profile').then(resp => {
-        document.getElementById("dis_name").innerHTML = resp.data.profile.uname;
+        document.getElementById("dis_name").innerHTML = resp.data.profile.name;
         document.getElementById("dis_email").innerHTML = resp.data.profile.email;
         document.getElementById("dis_phone").innerHTML = resp.data.profile.phone;
         document.getElementById("dis_gender").innerHTML = resp.data.profile.gender;

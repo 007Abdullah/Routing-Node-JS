@@ -47,7 +47,7 @@ app.use(function (req, res, next) {
         return;
     }
     jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
-
+       
         if (!err) {
 
             const issueDate = decodedData.iat * 1000;
@@ -95,6 +95,7 @@ app.get("/profile", (req, res, next) => {
             res.send({
                 profile: doc
             })
+            
         } else {
             res.send({
                 message: "Server Error",
