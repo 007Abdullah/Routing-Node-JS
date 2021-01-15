@@ -47,7 +47,6 @@ app.use(function (req, res, next) {
         return;
     }
     jwt.verify(req.cookies.jToken, SERVER_SECRET, function (err, decodedData) {
-       
         if (!err) {
 
             const issueDate = decodedData.iat * 1000;

@@ -8,7 +8,7 @@ var api = express.Router();
 var postmark = require("postmark");
 var { SERVER_SECRET } = require("../core/index");
 
-var client = new postmark.Client("sdafbjsdafkjsadf");
+var client = new postmark.Client("35cebacb-d58e-403b-aa4d-34d8cab6c422");
 
 
 
@@ -49,7 +49,6 @@ api.post("/signup", (req, res, next) => {
                             message: "User Create",
                             status: 200
                         });
-                      
                     }
                     else {
                         console.log(err);
@@ -99,7 +98,7 @@ api.post("/login", (req, res, next) => {
             });
         }
         else if (user) {
-
+            
             bcrypt.varifyHash(req.body.password, user.password).then(isMatched => {
                 if (isMatched) {
                     console.log("Matched");
@@ -111,7 +110,7 @@ api.post("/login", (req, res, next) => {
                         phone: user.phone,
                         gender: user.gender
                     }, SERVER_SECRET);
-
+                   
                     res.cookie('jToken', token, {
                         maxAge: 86_400_000,
                         httpOnly: true
@@ -127,7 +126,7 @@ api.post("/login", (req, res, next) => {
                     res.send({
                         message: "Login Success",
                         user: {
-                            name: user.name,
+                            name: user.uname,
                             email: user.email,
                             phone: user.phone,
                             gender: user.gender,
@@ -135,6 +134,7 @@ api.post("/login", (req, res, next) => {
                         },
                         status: 200
                     });
+                    
                 } else {
                     console.log("not matched");
                     res.send({
